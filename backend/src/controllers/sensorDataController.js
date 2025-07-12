@@ -1,4 +1,6 @@
 const db = require('../config/database');
+const fuelPredictionService = require('../services/fuelPredictionService');
+const { broadcast } = require('../websocket');
 
 exports.ingestSensorData = (req, res) => {
   const { vehicle_id, latitude, longitude, fuel_level, temperature } = req.body;
@@ -29,5 +31,14 @@ exports.ingestSensorData = (req, res) => {
       message: 'Datos del sensor recibidos y guardados.',
       dataId: this.lastID,
     });
+
+    // Transmitir los nuevos datos a todos los clientes conectados
+    broadcast({
+      type: 'NEW_SENSOR_DATA',
+      payload: req.body,
+    });
+
+    // Ejecutar el cálculo predictivo en segundo plano
+    fuelPredictionService.checkFuelAutonomy(req.body);
   });
 };
