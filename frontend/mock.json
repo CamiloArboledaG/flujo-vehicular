@@ -1,0 +1,66 @@
+{
+    "vehicles": [
+        {
+            "id": "1",
+            "license_plate": "ABC-123",
+            "model": "Toyota"
+        },
+        {
+            "id": "2",
+            "license_plate": "DEF-456",
+            "model": "Ford"
+        },
+        {
+            "id": "3",
+            "license_plate": "GHI-789",
+            "model": "Chevrolet"
+        }
+    ],
+    "sensor_data": [
+        {
+            "id": "1",
+            "vehicle_id": "1",
+            "latitude": 4.60971,
+            "longitude": -74.08175,
+            "fuel_level": 85.5,
+            "temperature": 25.5,
+            "timestamp": "2025-07-11 21:13:07"
+        },
+        {
+            "id": "2",
+            "vehicle_id": "2",
+            "latitude": 4.60871,
+            "longitude": -74.08075,
+            "fuel_level": 85.5,
+            "temperature": 25.5,
+            "timestamp": "2025-07-11 21:13:07"
+        },
+        {
+            "id": "3",
+            "vehicle_id": "3",
+            "latitude": 4.60771,
+            "longitude": -74.07975,
+            "fuel_level": 85.5,
+            "temperature": 25.5,
+            "timestamp": "2025-07-11 21:13:07"
+        },
+        {
+            "id": "4",
+            "vehicle_id": "1",
+            "latitude": 4.60671,
+            "longitude": -74.07875,
+            "fuel_level": 85.5,
+            "temperature": 25.5,
+            "timestamp": "2025-07-11 21:14:07"
+        },
+        {
+            "id": "5",
+            "vehicle_id": "2",
+            "latitude": 4.60571,
+            "longitude": -74.07775,
+            "fuel_level": 85.5,
+            "temperature": 25.5,
+            "timestamp": "2025-07-11 21:15:07"
+        }
+    ]
+}

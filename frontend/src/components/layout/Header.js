@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="h-[70px] px-6 flex justify-between items-center border-b border-border bg-background">
       <h1 className="text-3xl font-bold">Bienvenido</h1>
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <button className="bg-transparent border-none text-muted-foreground cursor-pointer">
           <Search size={20} />
         </button>
@@ -22,7 +22,7 @@ export default function Header() {
           <Bell size={20} />
         </button>
         <div className="text-sm text-muted-foreground">{currentTime}</div>
-      </div>
+      </div> */}
     </header>
   );
 }

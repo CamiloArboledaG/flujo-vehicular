@@ -21,3 +21,13 @@ exports.registerVehicle = (req, res) => {
     });
   });
 };
+
+exports.getVehicles = (req, res) => {
+  const sql = `SELECT * FROM vehicles`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).send({ error: 'No se pudo obtener los vehículos.' });
+    }
+    res.status(200).json(rows);
+  });
+};

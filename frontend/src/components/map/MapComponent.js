@@ -1,7 +1,9 @@
 'use client';
 
 import Map, { Marker, NavigationControl } from 'react-map-gl/maplibre';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSensorData } from '../../context/SensorDataContext';
+import config from '../../config/config';
 
 export default function MapComponent() {
   const [viewport, setViewport] = useState({
@@ -9,6 +11,22 @@ export default function MapComponent() {
     latitude: 4.60971,
     zoom: 10,
   });
+
+  const [vehicles, setVehicles] = useState([]);
+  const sensorData = useSensorData();
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch(`${config.URL_API}/vehicles`);
+        const data = await response.json();
+        setVehicles(data);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      }
+    };
+    fetchVehicles();
+  }, []);
 
   // IMPORTANTE: Reemplaza esto con tu propia clave de API de un proveedor de mapas.
   const MAPTILER_API_KEY = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
@@ -23,9 +41,21 @@ export default function MapComponent() {
         mapStyle={mapStyle}
       >
         <NavigationControl position="top-right" />
-        {/* Aquí irán los marcadores de los vehículos */}
-        <Marker latitude={4.60971} longitude={-74.08175} anchor="center"></Marker>
-        <Marker latitude={4.60971} longitude={-75.08175} anchor="center" offset={[0, -20]}></Marker>
+
+        {vehicles.map((vehicle) => {
+          const latestData = sensorData[vehicle.id];
+          if (latestData?.latitude && latestData?.longitude) {
+            return (
+              <Marker
+                key={vehicle.id}
+                latitude={latestData.latitude}
+                longitude={latestData.longitude}
+                anchor="center"
+              />
+            );
+          }
+          return null;
+        })}
       </Map>
     </div>
   );

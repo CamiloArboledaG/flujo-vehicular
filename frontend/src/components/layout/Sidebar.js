@@ -5,9 +5,9 @@ import { File, Globe, Settings, BarChart } from 'lucide-react';
 
 const navItems = [
   { name: 'Mapa', href: '/', icon: Globe },
-  { name: 'Vehículos', href: '/vehicles', icon: File },
-  { name: 'Reportes', href: '/reports', icon: BarChart },
-  { name: 'Administrativo', href: '/admin', icon: Settings },
+  // { name: 'Vehículos', href: '/vehicles', icon: File },
+  // { name: 'Reportes', href: '/reports', icon: BarChart },
+  // { name: 'Administrativo', href: '/admin', icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -15,7 +15,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-[250px] bg-secondary p-6 flex flex-col h-screen border-r border-border">
-      <div className="text-4xl font-bold mb-10 pl-3">Simôn</div>
+      <div className="text-4xl font-bold mb-10 pl-3">Simon</div>
       <nav className="flex-grow">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -32,14 +32,14 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="flex items-center mb-5 p-3">
+      {/* <div className="flex items-center mb-5 p-3">
         <div className="w-10 h-10 rounded-full bg-brand mr-3"></div>
         <div>
           <p className="font-semibold text-sm">Camilo Alejandro Marin</p>
           <p className="text-xs text-muted-foreground">System Administrator</p>
         </div>
       </div>
-      <div className="p-3 text-center text-muted-foreground cursor-pointer">Cerrar sesión</div>
+      <div className="p-3 text-center text-muted-foreground cursor-pointer">Cerrar sesión</div> */}
     </aside>
   );
 }
