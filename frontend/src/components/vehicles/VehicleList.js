@@ -1,7 +1,5 @@
 import { Search } from 'lucide-react';
-import mockVehicles from '../../../mock.json';
-import { useEffect, useState } from 'react';
-import config from '../../config/config';
+import { useVehicles } from '../../context/VehicleContext';
 
 function VehicleCard({ vehicle }) {
   return (
@@ -28,29 +26,7 @@ function VehicleCard({ vehicle }) {
 }
 
 export default function VehicleList() {
-  const [vehicles, setVehicles] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
-  const [filteredVehicles, setFilteredVehicles] = useState([]);
-
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      const response = await fetch(`${config.URL_API}/vehicles`);
-      const data = await response.json();
-      setVehicles(data);
-      setFilteredVehicles(data);
-    };
-    fetchVehicles();
-  }, []);
-
-  const handleSearch = (e) => {
-    if (e.target.value === '') {
-      setFilteredVehicles(vehicles);
-    } else {
-      const filteredVehicles = vehicles.filter((v) => v.license_plate.includes(e.target.value));
-      setFilteredVehicles(filteredVehicles);
-    }
-    setSearchValue(e.target.value);
-  };
+  const { filteredVehicles, searchTerm, updateSearchTerm } = useVehicles();
 
   return (
     <div className="w-[400px] bg-card p-6 flex flex-col border-r border-border">
@@ -59,9 +35,9 @@ export default function VehicleList() {
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
-          value={searchValue}
-          onChange={handleSearch}
-          placeholder="Buscar por placa o IMEI"
+          value={searchTerm}
+          onChange={(e) => updateSearchTerm(e.target.value)}
+          placeholder="Buscar por placa"
           className="w-full p-2.5 pl-10 bg-secondary border border-border rounded-lg text-foreground text-base"
         />
       </div>

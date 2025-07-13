@@ -1,9 +1,9 @@
 'use client';
 
 import Map, { Marker, NavigationControl } from 'react-map-gl/maplibre';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSensorData } from '../../context/SensorDataContext';
-import config from '../../config/config';
+import { useVehicles } from '../../context/VehicleContext';
 import { Car, Truck } from 'lucide-react';
 
 export default function MapComponent() {
@@ -13,26 +13,11 @@ export default function MapComponent() {
     zoom: 10,
   });
 
-  const [vehicles, setVehicles] = useState([]);
+  const { filteredVehicles, updateSearchTerm } = useVehicles();
   const sensorData = useSensorData();
 
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const response = await fetch(`${config.URL_API}/vehicles`);
-        const data = await response.json();
-        setVehicles(data);
-      } catch (error) {
-        console.error('Error fetching vehicles:', error);
-      }
-    };
-    fetchVehicles();
-  }, []);
-
   const handleMarkerClick = (vehicle) => {
-    console.log('Vehículo seleccionado:', vehicle);
-    // Aquí podrías implementar la lógica para mostrar un popup,
-    // centrar el mapa en el vehículo, o seleccionar el vehículo en la lista.
+    updateSearchTerm(vehicle.license_plate);
   };
 
   // IMPORTANTE: Reemplaza esto con tu propia clave de API de un proveedor de mapas.
@@ -49,7 +34,7 @@ export default function MapComponent() {
       >
         <NavigationControl position="top-right" />
 
-        {vehicles.map((vehicle) => {
+        {filteredVehicles.map((vehicle) => {
           const latestData = sensorData[vehicle.id];
           if (latestData?.latitude && latestData?.longitude) {
             return (
