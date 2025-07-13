@@ -13,6 +13,7 @@ export function VehicleProvider({ children }) {
   const [allVehicles, setAllVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [trackingInfo, setTrackingInfo] = useState({ vehicle: null, trigger: 0 });
 
   // 1. Cargar todos los vehículos una sola vez
   useEffect(() => {
@@ -40,10 +41,23 @@ export function VehicleProvider({ children }) {
     }
   };
 
+  // 3. Función para establecer el vehículo a rastrear
+  const trackVehicle = (vehicle) => {
+    setTrackingInfo((prev) => ({ vehicle, trigger: prev.trigger + 1 }));
+  };
+
+  // 4. Función para consumir/limpiar el evento de rastreo
+  const consumeTrackedVehicle = () => {
+    setTrackingInfo((prev) => ({ ...prev, vehicle: null }));
+  };
+
   const value = {
     filteredVehicles,
     searchTerm,
     updateSearchTerm,
+    trackingInfo,
+    trackVehicle,
+    consumeTrackedVehicle,
   };
 
   return <VehicleContext.Provider value={value}>{children}</VehicleContext.Provider>;

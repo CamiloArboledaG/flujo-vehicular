@@ -1,7 +1,7 @@
 'use client';
 
 import Map, { Marker, NavigationControl } from 'react-map-gl/maplibre';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSensorData } from '../../context/SensorDataContext';
 import { useVehicles } from '../../context/VehicleContext';
 import { Car, Truck } from 'lucide-react';
@@ -13,8 +13,25 @@ export default function MapComponent() {
     zoom: 10,
   });
 
-  const { filteredVehicles, updateSearchTerm } = useVehicles();
+  const { filteredVehicles, updateSearchTerm, trackingInfo, consumeTrackedVehicle } = useVehicles();
   const sensorData = useSensorData();
+
+  useEffect(() => {
+    const { vehicle } = trackingInfo;
+    if (!vehicle) return;
+
+    const latestData = sensorData[vehicle.id];
+    if (latestData?.latitude && latestData?.longitude) {
+      setViewport((prev) => ({
+        ...prev,
+        latitude: latestData.latitude,
+        longitude: latestData.longitude,
+        zoom: 15, // Zoom más cercano
+      }));
+      // Limpiamos el estado para que el rastreo sea un evento de una sola vez
+      consumeTrackedVehicle();
+    }
+  }, [trackingInfo, sensorData, consumeTrackedVehicle]);
 
   const handleMarkerClick = (vehicle) => {
     updateSearchTerm(vehicle.license_plate);

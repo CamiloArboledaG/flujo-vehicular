@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import { useVehicles } from '../../context/VehicleContext';
 
-function VehicleCard({ vehicle }) {
+function VehicleCard({ vehicle, onTrack }) {
   return (
     <div className="bg-secondary rounded-lg p-4 mb-3 border border-border">
       <div className="flex justify-between items-center mb-3">
@@ -14,7 +14,10 @@ function VehicleCard({ vehicle }) {
         </p>
       </div>
       <div className="mt-4 flex gap-2">
-        <button className="flex-1 p-2 rounded-lg border-none cursor-pointer font-semibold bg-gray-700 text-white">
+        <button
+          onClick={() => onTrack(vehicle)}
+          className="flex-1 p-2 rounded-lg border-none cursor-pointer font-semibold bg-gray-700 text-white"
+        >
           Rastrear
         </button>
         <button className="flex-1 p-2 rounded-lg border-none cursor-pointer font-semibold bg-brand text-card">
@@ -26,7 +29,7 @@ function VehicleCard({ vehicle }) {
 }
 
 export default function VehicleList() {
-  const { filteredVehicles, searchTerm, updateSearchTerm } = useVehicles();
+  const { filteredVehicles, searchTerm, updateSearchTerm, trackVehicle } = useVehicles();
 
   return (
     <div className="w-[400px] bg-card p-6 flex flex-col border-r border-border">
@@ -43,7 +46,7 @@ export default function VehicleList() {
       </div>
       <div className="flex-grow overflow-y-auto">
         {filteredVehicles.map((v) => (
-          <VehicleCard key={v.id} vehicle={v} />
+          <VehicleCard key={v.id} vehicle={v} onTrack={trackVehicle} />
         ))}
       </div>
       {/* Paginación aquí */}
