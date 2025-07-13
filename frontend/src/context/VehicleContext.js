@@ -9,22 +9,39 @@ export function useVehicles() {
   return useContext(VehicleContext);
 }
 
+const VEHICLES_CACHE_KEY = 'vehicles_cache';
+
 export function VehicleProvider({ children }) {
   const [allVehicles, setAllVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [trackingInfo, setTrackingInfo] = useState({ vehicle: null, trigger: 0 });
 
-  // 1. Cargar todos los vehículos una sola vez
+  // 1. Cargar todos los vehículos una sola vez, usando caché
   useEffect(() => {
+    // Intentar cargar desde el caché primero
+    try {
+      const cachedVehicles = localStorage.getItem(VEHICLES_CACHE_KEY);
+      if (cachedVehicles) {
+        const parsedVehicles = JSON.parse(cachedVehicles);
+        setAllVehicles(parsedVehicles);
+        setFilteredVehicles(parsedVehicles);
+      }
+    } catch (error) {
+      console.error('Error al leer el caché de vehículos:', error);
+    }
+
+    // Luego, buscar datos frescos
     const fetchVehicles = async () => {
       try {
         const response = await fetch(`${config.URL_API}/vehicles`);
         const data = await response.json();
         setAllVehicles(data);
-        setFilteredVehicles(data); // Inicialmente, todos los vehículos están visibles
+        setFilteredVehicles(data);
+        // Guardar en caché para la próxima vez
+        localStorage.setItem(VEHICLES_CACHE_KEY, JSON.stringify(data));
       } catch (error) {
-        console.error('Error fetching vehicles:', error);
+        console.error('Error fetching vehicles (posiblemente offline):', error);
       }
     };
     fetchVehicles();

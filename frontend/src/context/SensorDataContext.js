@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import config from '../config/config';
 import toast from 'react-hot-toast';
 
+const SENSOR_DATA_CACHE_KEY = 'sensor_data_cache';
 const SensorDataContext = createContext();
 
 export function useSensorData() {
@@ -14,6 +15,16 @@ export function SensorDataProvider({ children }) {
   const [sensorData, setSensorData] = useState({});
 
   useEffect(() => {
+    // Intentar cargar desde el caché primero
+    try {
+      const cachedData = localStorage.getItem(SENSOR_DATA_CACHE_KEY);
+      if (cachedData) {
+        setSensorData(JSON.parse(cachedData));
+      }
+    } catch (error) {
+      console.error('Error al leer el caché de datos de sensor:', error);
+    }
+
     // 1. Obtener los datos iniciales
     const fetchInitialData = async () => {
       try {
@@ -35,8 +46,10 @@ export function SensorDataProvider({ children }) {
           return acc;
         }, {});
         setSensorData(initialSensorData);
+        // Guardar en caché para la próxima vez
+        localStorage.setItem(SENSOR_DATA_CACHE_KEY, JSON.stringify(initialSensorData));
       } catch (error) {
-        console.error('Error fetching initial sensor data:', error);
+        console.error('Error fetching initial sensor data (posiblemente offline):', error);
       }
     };
 
