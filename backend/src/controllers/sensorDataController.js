@@ -42,3 +42,13 @@ exports.ingestSensorData = (req, res) => {
     fuelPredictionService.checkFuelAutonomy(req.body);
   });
 };
+exports.getAllSensorDataByVehicleId = (req, res) => {
+  const { vehicle_id } = req.params;
+  const sql = `SELECT * FROM sensor_data WHERE vehicle_id = ?`;
+  db.all(sql, [vehicle_id], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener los datos del sensor.' });
+    }
+    res.status(200).json(rows);
+  });
+};
