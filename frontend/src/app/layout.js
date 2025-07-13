@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { Toaster } from 'react-hot-toast';
 
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <SensorDataProvider>
           <VehicleProvider>
+            <Toaster />
             <div className="flex h-screen">
               <main className="flex-1 flex flex-col h-screen">
                 <Header />

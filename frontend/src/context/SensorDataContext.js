@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import config from '../config/config';
+import toast from 'react-hot-toast';
 
 const SensorDataContext = createContext();
 
@@ -51,6 +52,7 @@ export function SensorDataProvider({ children }) {
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
+
       if (message.type === 'NEW_SENSOR_DATA') {
         const newPayload = message.payload;
 
@@ -58,6 +60,16 @@ export function SensorDataProvider({ children }) {
           ...prevData,
           [newPayload.vehicle_id]: newPayload,
         }));
+      } else if (message.type === 'FUEL_ALERT') {
+        // Disparamos una notificación de advertencia
+        toast.error(message.payload.message, {
+          duration: 6000, // Durará 6 segundos en pantalla
+          position: 'top-center',
+          iconTheme: {
+            primary: '#F59E0B', // Un color ámbar para advertencia
+            secondary: '#FFFFFF',
+          },
+        });
       }
     };
 

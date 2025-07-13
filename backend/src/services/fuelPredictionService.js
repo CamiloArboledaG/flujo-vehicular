@@ -9,8 +9,18 @@ const { broadcast } = require('../websocket');
  */
 function checkFuelAutonomy(currentReading) {
   // Para calcular un ratio, necesitamos al menos dos puntos de datos.
-  // Obtenemos las 2 últimas lecturas del vehículo, incluyendo la actual.
-  const sql = `SELECT * FROM sensor_data WHERE vehicle_id = ? ORDER BY timestamp DESC LIMIT 2`;
+  // Obtenemos las 2 últimas lecturas del vehículo, incluyendo la actual,
+  // y unimos con la tabla de vehículos para obtener la matrícula.
+  const sql = `
+    SELECT
+      sd.*,
+      v.license_plate
+    FROM sensor_data sd
+    JOIN vehicles v ON v.id = sd.vehicle_id
+    WHERE sd.vehicle_id = ?
+    ORDER BY sd.timestamp DESC
+    LIMIT 2
+  `;
 
   db.all(sql, [currentReading.vehicle_id], (err, rows) => {
     if (err) {
@@ -50,15 +60,18 @@ function checkFuelAutonomy(currentReading) {
     const remainingAutonomyHours = latestReading.fuel_level / consumptionRatePerHour;
 
     console.log(
-      `Vehículo ${currentReading.vehicle_id}: Autonomía restante estimada: ${remainingAutonomyHours.toFixed(2)} horas.`
+      `Vehículo ${latestReading.license_plate} (${
+        currentReading.vehicle_id
+      }): Autonomía restante estimada: ${remainingAutonomyHours.toFixed(2)} horas.`
     );
 
     // La condición de alerta.
     if (remainingAutonomyHours < 1) {
       const alertPayload = {
         vehicle_id: latestReading.vehicle_id,
+        license_plate: latestReading.license_plate,
         remainingAutonomyHours: remainingAutonomyHours,
-        message: `Vehículo ${latestReading.vehicle_id} tiene menos de 1 hora de autonomía.`,
+        message: `¡Alerta! Vehículo ${latestReading.license_plate} tiene menos de 1 hora de autonomía.`,
       };
 
       console.warn(`*** ALERTA EMITIDA ***`, alertPayload.message);
