@@ -31,3 +31,38 @@ exports.getVehicles = (req, res) => {
     res.status(200).json(rows);
   });
 };
+
+exports.getVehiclesWithLastSensorData = (req, res) => {
+  const sql = `
+    SELECT
+      v.id,
+      v.license_plate,
+      v.model,
+      sd.latitude,
+      sd.longitude,
+      sd.fuel_level,
+      sd.temperature,
+      sd.timestamp
+    FROM vehicles v
+    LEFT JOIN (
+      SELECT
+        s.*
+      FROM sensor_data s
+      INNER JOIN (
+        SELECT
+          vehicle_id,
+          MAX(timestamp) AS max_timestamp
+        FROM sensor_data
+        GROUP BY vehicle_id
+      ) AS latest ON s.vehicle_id = latest.vehicle_id AND s.timestamp = latest.max_timestamp
+    ) AS sd ON v.id = sd.vehicle_id
+  `;
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener el estado de los vehículos:', err.message);
+      return res.status(500).json({ error: 'No se pudo obtener el estado de los vehículos.' });
+    }
+    res.status(200).json(rows);
+  });
+};

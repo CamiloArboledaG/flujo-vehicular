@@ -11,10 +11,10 @@ const sensorReadings = [
   { vehicle_id: 1, latitude: 4.60971, longitude: -74.08175, fuel_level: 85.5, temperature: 14.5 },
   { vehicle_id: 1, latitude: 4.61971, longitude: -74.09175, fuel_level: 82.1, temperature: 15.0 },
   // Datos para el vehículo 2
-  { vehicle_id: 2, latitude: 34.05223, longitude: -118.24368, fuel_level: 90.0, temperature: 22.3 },
-  { vehicle_id: 2, latitude: 34.06223, longitude: -118.25368, fuel_level: 88.2, temperature: 21.9 },
+  { vehicle_id: 2, latitude: 5.60971, longitude: -74.08175, fuel_level: 90.0, temperature: 22.3 },
+  { vehicle_id: 2, latitude: 5.61971, longitude: -74.09175, fuel_level: 88.2, temperature: 21.9 },
   // Datos para el vehículo 3
-  { vehicle_id: 3, latitude: 40.71277, longitude: -74.00597, fuel_level: 65.2, temperature: 18.1 },
+  { vehicle_id: 3, latitude: 6.61971, longitude: -74.00597, fuel_level: 65.2, temperature: 18.1 },
 ];
 
 function seed() {
