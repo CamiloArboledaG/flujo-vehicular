@@ -2,14 +2,21 @@
 
 import MapComponent from '@/components/map/MapComponent';
 import VehicleList from '@/components/vehicles/VehicleList';
+import withAuth from '@/components/auth/withAuth';
+import Header from '@/components/layout/Header';
 
-export default function Home() {
+function HomePage() {
   return (
-    <div className="flex h-[calc(100vh-var(--header-height))]">
-      <VehicleList />
-      <div className="flex-1 h-full">
-        <MapComponent />
+    <>
+      <Header />
+      <div className="flex h-[calc(100vh-var(--header-height))]">
+        <VehicleList />
+        <div className="flex-1 h-full">
+          <MapComponent />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
+
+export default withAuth(HomePage);

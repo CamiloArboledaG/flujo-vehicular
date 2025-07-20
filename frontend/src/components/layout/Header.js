@@ -1,28 +1,30 @@
-import { Search, Bell } from 'lucide-react';
+'use client';
+
+import { LogOut } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
-  const currentTime = new Date().toLocaleString('es-CO', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  });
+  const { user, logout, loading } = useAuth();
+
+
+  if(loading || !user) {
+    return null;
+  }
 
   return (
-    <header className="h-[70px] px-6 flex justify-between items-center border-b border-border bg-background">
-      <h1 className="text-3xl font-bold">Bienvenido</h1>
-      {/* <div className="flex items-center gap-4">
-        <button className="bg-transparent border-none text-muted-foreground cursor-pointer">
-          <Search size={20} />
-        </button>
-        <button className="bg-transparent border-none text-muted-foreground cursor-pointer">
-          <Bell size={20} />
-        </button>
-        <div className="text-sm text-muted-foreground">{currentTime}</div>
-      </div> */}
+    <header className="h-[var(--header-height)] px-6 flex justify-between items-center border-b border-border bg-card">
+      <h1 className="text-xl font-semibold">Plataforma de Monitoreo Vehicular</h1>
+      <div className="flex items-center gap-4">
+        {!loading && user && (
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 p-2 rounded-lg border-none cursor-pointer font-semibold bg-secondary text-foreground hover:bg-secondary/80"
+          >
+            <LogOut size={18} />
+            <span>Cerrar Sesión</span>
+          </button>
+        )}
+      </div>
     </header>
   );
 }

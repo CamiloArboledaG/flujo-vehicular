@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import config from '../../config/config';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { X } from 'lucide-react';
+import { fetchWithAuth } from '@/utils/api';
 
 // Función para calcular la distancia entre dos puntos (fórmula de Haversine)
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -31,7 +32,12 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
     const fetchHistory = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${config.URL_API}/sensor-data/${vehicle.id}`);
+        const response = await fetchWithAuth(`${config.URL_API}/sensor-data/${vehicle.id}`);
+
+        if (!response.ok) {
+          throw new Error('Error al obtener el historial del vehículo');
+        }
+
         const data = await response.json();
 
         // Procesar datos para añadir velocidad y formatear
@@ -60,7 +66,9 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
 
         setHistory(processedData);
       } catch (error) {
-        console.error('Error fetching vehicle history:', error);
+        if (error.message !== 'No autorizado') {
+          console.error('Error fetching vehicle history:', error);
+        }
       } finally {
         setLoading(false);
       }

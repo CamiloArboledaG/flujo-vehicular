@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import config from '../config/config';
 import toast from 'react-hot-toast';
+import { useAuth } from './AuthContext';
+import { fetchWithAuth } from '@/utils/api';
 
 const SENSOR_DATA_CACHE_KEY = 'sensor_data_cache';
 const SensorDataContext = createContext();
@@ -12,9 +14,16 @@ export function useSensorData() {
 }
 
 export function SensorDataProvider({ children }) {
+  const { user } = useAuth();
   const [sensorData, setSensorData] = useState({});
 
   useEffect(() => {
+    // Si no hay usuario, no hacemos nada y limpiamos los datos.
+    if (!user) {
+      setSensorData({});
+      return;
+    }
+
     // Intentar cargar desde el caché primero
     try {
       const cachedData = localStorage.getItem(SENSOR_DATA_CACHE_KEY);
@@ -28,7 +37,12 @@ export function SensorDataProvider({ children }) {
     // 1. Obtener los datos iniciales
     const fetchInitialData = async () => {
       try {
-        const response = await fetch(`${config.URL_API}/vehicles/status`);
+        const response = await fetchWithAuth(`${config.URL_API}/vehicles/status`);
+
+        if (!response.ok) {
+          throw new Error('Error al obtener el estado de los vehículos');
+        }
+
         const initialVehicles = await response.json();
 
         // Transformar el array de vehículos en un objeto de sensorData
@@ -49,7 +63,9 @@ export function SensorDataProvider({ children }) {
         // Guardar en caché para la próxima vez
         localStorage.setItem(SENSOR_DATA_CACHE_KEY, JSON.stringify(initialSensorData));
       } catch (error) {
-        console.error('Error fetching initial sensor data (posiblemente offline):', error);
+        if (error.message !== 'No autorizado') {
+          console.error('Error fetching initial sensor data:', error);
+        }
       }
     };
 
@@ -97,7 +113,7 @@ export function SensorDataProvider({ children }) {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [user]); // <-- La dependencia clave es el usuario
 
   return <SensorDataContext.Provider value={sensorData}>{children}</SensorDataContext.Provider>;
 }

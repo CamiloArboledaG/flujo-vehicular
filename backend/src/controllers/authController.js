@@ -63,6 +63,7 @@ exports.login = (req, res) => {
     const payload = {
       id: user.id,
       username: user.username,
+      admin: user.admin === 1, // Convertir a booleano
       exp: Math.floor(Date.now() / 1000) + 60 * 60, // Expira en 1 hora
     };
 
