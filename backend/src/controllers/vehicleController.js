@@ -1,5 +1,14 @@
 const db = require('../config/database');
 
+// Función para enmascarar la matrícula
+function maskLicensePlate(plate) {
+  if (!plate || plate.length < 4) {
+    return plate;
+  }
+  // Muestra los primeros 3 caracteres y el último caracter
+  return `${plate.substring(0, 3)}****${plate.substring(plate.length - 1)}`;
+}
+
 exports.registerVehicle = (req, res) => {
   const { license_plate, model } = req.body;
   if (!license_plate) {
@@ -28,6 +37,14 @@ exports.getVehicles = (req, res) => {
     if (err) {
       return res.status(500).send({ error: 'No se pudo obtener los vehículos.' });
     }
+
+    // Si el usuario no es admin, enmascaramos la matrícula
+    if (!req.user.admin) {
+      rows.forEach((row) => {
+        row.license_plate = maskLicensePlate(row.license_plate);
+      });
+    }
+
     res.status(200).json(rows);
   });
 };
@@ -63,6 +80,14 @@ exports.getVehiclesWithLastSensorData = (req, res) => {
       console.error('Error al obtener el estado de los vehículos:', err.message);
       return res.status(500).json({ error: 'No se pudo obtener el estado de los vehículos.' });
     }
+
+    // Si el usuario no es admin, enmascaramos la matrícula
+    if (!req.user.admin) {
+      rows.forEach((row) => {
+        row.license_plate = maskLicensePlate(row.license_plate);
+      });
+    }
+
     res.status(200).json(rows);
   });
 };
