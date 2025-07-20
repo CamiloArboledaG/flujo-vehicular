@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { broadcast } = require('../websocket');
+const { broadcastToAdmins } = require('../websocket');
 
 /**
  * Analiza los datos de un vehículo para determinar si tiene baja autonomía de combustible.
@@ -77,7 +77,7 @@ function checkFuelAutonomy(currentReading) {
       console.warn(`*** ALERTA EMITIDA ***`, alertPayload.message);
 
       // Transmitir la alerta a todos los clientes conectados
-      broadcast({
+      broadcastToAdmins({
         type: 'FUEL_ALERT',
         payload: alertPayload,
       });

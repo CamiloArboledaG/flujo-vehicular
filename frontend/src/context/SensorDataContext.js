@@ -72,7 +72,12 @@ export function SensorDataProvider({ children }) {
     fetchInitialData();
 
     // 2. Conectarse al WebSocket para actualizaciones en tiempo real
-    const wsUrl = config.URL_API.replace(/^http/, 'ws');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('No hay token para la conexión WebSocket.');
+      return;
+    }
+    const wsUrl = `${config.URL_API.replace(/^http/, 'ws')}?token=${token}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
